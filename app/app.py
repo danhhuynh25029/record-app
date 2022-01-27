@@ -16,17 +16,18 @@ class App:
         self.label = tk.Label(self.window)
         self.label.pack()
         self.delay = 15
+        self.path = "/home/danh/Desktop/record-app/app/"
         self.count = 1
     # @staticmethod
     def update(self):
-        print(self.r)
-        print(self.count)
+        #print(self.r)
+        #print(self.count)
         time = datetime.datetime.now()
-        nameVideo = time.strftime("%d")+"-"+time.strftime("%m")+"-"+time.strftime("%Y")+"-"+time.strftime("%H")+"-"+time.strftime("%f")+".avi"
+        nameVideo = self.path + time.strftime("%d")+"-"+time.strftime("%m")+"-"+time.strftime("%Y")+"-"+time.strftime("%H")+"-"+time.strftime("%f")+".avi"
         frame_width,frame_height,frame,frameResized = self.screen.getframe()
-        print(frame_width,frame_height)
+        #print(frame_width,frame_height)
         if self.r == True:
-            self.out =  out = cv2.VideoWriter(nameVideo,cv2.VideoWriter_fourcc('M','J','P','G'), 30, (frame_width,frame_height))
+            self.out = cv2.VideoWriter(nameVideo,cv2.VideoWriter_fourcc('M','J','P','G'), 30, (frame_width,frame_height))
             self.r = False
         if self.count % 2 == 0:
             self.out.write(frame)
@@ -40,13 +41,23 @@ class App:
         self.update()
         # self.createButton()
         self.window.mainloop()
-    def createButton(self): 
+    def createButton(self):
+        self.B1 = tk.Button(self.window,text="save",command=self.save)
+        self.L1 = tk.Label(self.window,text="Path")
+        self.P1 = tk.Entry(self.window)
+        self.P1.place(x=70,y=300)
+        self.L1.place(x=30,y=300)
+        self.B1.place(x=250,y=300)
         if self.r == True:
             self.button = tk.Button(self.window,text="recording",command=self.record)
             self.button.place(x=500,y=0)
         else:
             self.button = tk.Button(self.window,text="record",command=self.record)
             self.button.place(x=500,y=0)
+    def save(self):
+        self.path = self.P1.get()
+        print(self.path)
+
     def record(self):
         self.count += 1
         self.r = True if self.count % 2 == 0 else False
@@ -57,8 +68,9 @@ class MyFrame:
     def getframe(self):
         img = ImageGrab.grab()
         frame = np.array(img)
+        frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
         frameResized = cv2.resize(frame,(480,270))
-        return frame.shape[1],frame.shape[0],frame,cv2.cvtColor(frameResized,cv2.COLOR_BGR2RGB)
+        return frame.shape[1],frame.shape[0],frame,frameResized
 if __name__ == "__main__":
     a = App()
     a.run()
